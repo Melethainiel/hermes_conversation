@@ -2,9 +2,11 @@
   "domain": "hermes_conversation",
   "name": "Hermes Conversation Agent",
   "version": "0.1.0",
-  "documentation": "https://github.com/your-repo/hermes_conversation",
+  "documentation": "https://github.com/Melethainiel/hermes_conversation",
   "dependencies": ["conversation"],
-  "codeowners": [],
+  "codeowners": ["@Melethainiel"],
   "config_flow": true,
-  "iot_class": "local_polling"
+  "integration_type": "service",
+  "iot_class": "local_polling",
+  "requirements": ["aiohttp>=3.8.0"]
 }

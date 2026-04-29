@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dev deps
+        run: pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: pytest --cov --cov-report=term-missing
+
+      - name: Update version in manifest
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          python -c "
+          import json
+          m = json.load(open('custom_components/hermes_conversation/manifest.json'))
+          m['version'] = '$VERSION'
+          json.dump(m, open('custom_components/hermes_conversation/manifest.json', 'w'), indent=2)
+          "
+
+      - name: Create zip
+        run: |
+          cd custom_components
+          zip -r ../hermes_conversation.zip hermes_conversation/
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: hermes_conversation.zip

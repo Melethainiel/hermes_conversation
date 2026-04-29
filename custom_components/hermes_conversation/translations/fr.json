@@ -1,0 +1,17 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Hermes Conversation Agent",
+        "description": "Configurez la connexion vers votre wrapper Hermes.",
+        "data": {
+          "hermes_url": "URL du wrapper Hermes",
+          "timeout": "Timeout (secondes)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de se connecter au wrapper Hermes. Vérifiez l'URL et assurez-vous qu'il est en cours d'exécution."
+    }
+  }
+}

@@ -1,0 +1,15 @@
+[project]
+name = "hermes-conversation"
+version = "0.1.0"
+description = "Home Assistant custom integration - Hermes Agent as Conversation Agent"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["custom_components/hermes_conversation"]
+
+[tool.coverage.report]
+fail_under = 80
