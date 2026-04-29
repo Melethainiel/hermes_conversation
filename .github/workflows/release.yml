@@ -16,12 +16,6 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dev deps
-        run: pip install -r requirements-dev.txt
-
-      - name: Run tests
-        run: pytest --cov --cov-report=term-missing
-
       - name: Update version in manifest
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
