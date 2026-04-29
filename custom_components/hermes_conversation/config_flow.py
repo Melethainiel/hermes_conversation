@@ -7,7 +7,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
 
-from .const import DOMAIN, CONF_HERMES_URL, DEFAULT_HERMES_URL, CONF_TIMEOUT, DEFAULT_TIMEOUT
+from .const import CONF_HERMES_URL, CONF_TIMEOUT, DEFAULT_HERMES_URL, DEFAULT_TIMEOUT, DOMAIN
 
 
 class HermesConversationConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):

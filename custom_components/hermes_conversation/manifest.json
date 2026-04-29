@@ -1,7 +1,7 @@
 {
   "domain": "hermes_conversation",
   "name": "Hermes Conversation Agent",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "documentation": "https://github.com/Melethainiel/hermes_conversation",
   "dependencies": ["conversation"],
   "codeowners": ["@Melethainiel"],

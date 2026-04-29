@@ -4,7 +4,6 @@ Hermes Voice Wrapper — FastAPI bridge between Home Assistant and Hermes Agent.
 Receives POST /voice from HA ConversationEntity, calls Hermes via AIAgent library,
 returns the response synchronously.
 """
-import os
 import logging
 
 from fastapi import FastAPI, HTTPException
@@ -52,7 +51,7 @@ async def voice(req: VoiceRequest):
         response = agent.chat(req.text)
     except Exception as ex:
         logger.exception("Hermes agent error")
-        raise HTTPException(status_code=502, detail=str(ex))
+        raise HTTPException(status_code=502, detail=str(ex)) from ex
 
     if not response:
         response = "Je n'ai pas de reponse."
