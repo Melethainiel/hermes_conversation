@@ -4,7 +4,6 @@ from __future__ import annotations
 import logging
 
 import aiohttp
-
 from homeassistant.components import conversation
 from homeassistant.components.conversation import (
     ConversationEntity,
@@ -61,14 +60,16 @@ class HermesConversationAgent(ConversationEntity):
             payload["device_id"] = user_input.device_id
 
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.post(
+            async with (
+                aiohttp.ClientSession() as session,
+                session.post(
                     hermes_url,
                     json=payload,
                     timeout=aiohttp.ClientTimeout(total=timeout),
-                ) as response:
-                    response.raise_for_status()
-                    data = await response.json()
+                ) as response,
+            ):
+                response.raise_for_status()
+                data = await response.json()
         except Exception:
             _LOGGER.exception("Hermes request failed: %s", hermes_url)
             intent_response = conversation.IntentResponse(

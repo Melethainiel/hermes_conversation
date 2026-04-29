@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import aiohttp
 import voluptuous as vol
-
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
 
@@ -23,13 +22,15 @@ class HermesConversationConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             url = user_input[CONF_HERMES_URL]
             # Test connectivity
             try:
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(
+                async with (
+                    aiohttp.ClientSession() as session,
+                    session.get(
                         url.rsplit("/", 1)[0] + "/health",
                         timeout=aiohttp.ClientTimeout(total=5),
-                    ) as resp:
-                        if resp.status != 200:
-                            errors["base"] = "cannot_connect"
+                    ) as resp,
+                ):
+                    if resp.status != 200:
+                        errors["base"] = "cannot_connect"
             except Exception:
                 errors["base"] = "cannot_connect"
 
