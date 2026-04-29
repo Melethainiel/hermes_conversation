@@ -1,16 +1,10 @@
 FROM python:3.11-slim
 
-# System deps for Hermes install script
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl bash git xz-utils && \
+RUN apt-get update && apt-get install -y --no-install-recommends git && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Hermes Agent via official script
-RUN curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
-
-# Use Hermes' own venv for everything
-ENV VIRTUAL_ENV="/usr/local/lib/hermes-agent/.venv"
-ENV PATH="${VIRTUAL_ENV}/bin:/root/.local/bin:/root/.hermes/node/bin:${PATH}"
+# Install Hermes Agent from source (just the Python package, no extras)
+RUN pip install --no-cache-dir git+https://github.com/NousResearch/hermes-agent.git
 
 WORKDIR /app
 COPY requirements.txt .
