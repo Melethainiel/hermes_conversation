@@ -6,5 +6,5 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # Hermes reads its config (API keys, LLM, memory, etc.) from here
-      - ~/.hermes:/root/.hermes
+      # Hermes config (API keys, model, memory, personality, etc.)
+      - ~/.hermes:/root/.hermes:ro
