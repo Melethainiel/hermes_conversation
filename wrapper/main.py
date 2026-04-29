@@ -1,28 +1,18 @@
 """
 Hermes Voice Wrapper — FastAPI bridge between Home Assistant and Hermes Agent.
 
-Receives POST /voice from HA ConversationEntity, calls Hermes via AIAgent library,
-returns the response synchronously.
+Calls the `hermes` CLI via subprocess. The hermes binary is mounted from the host.
 """
+import asyncio
 import logging
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from run_agent import AIAgent
 
 app = FastAPI(title="Hermes Voice Wrapper")
 logger = logging.getLogger("hermes_wrapper")
 
-# Optional: pre-create a shared agent instance for faster responses
-_agent: AIAgent | None = None
-
-
-def get_agent() -> AIAgent:
-    """Lazy-init a shared AIAgent instance."""
-    global _agent
-    if _agent is None:
-        _agent = AIAgent(quiet_mode=True)
-    return _agent
+HERMES_TIMEOUT = 55
 
 
 class VoiceRequest(BaseModel):
@@ -44,20 +34,35 @@ async def health():
 
 @app.post("/voice", response_model=VoiceResponse)
 async def voice(req: VoiceRequest):
-    """Forward text to Hermes Agent and return the response."""
-    agent = get_agent()
+    """Forward text to Hermes Agent CLI and return the response."""
+    cmd = ["/usr/local/bin/hermes", "run", "--message", req.text]
 
     try:
-        response = agent.chat(req.text)
-    except Exception as ex:
-        logger.exception("Hermes agent error")
-        raise HTTPException(status_code=502, detail=str(ex)) from ex
+        proc = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await asyncio.wait_for(
+            proc.communicate(), timeout=HERMES_TIMEOUT
+        )
+    except asyncio.TimeoutError:
+        raise HTTPException(status_code=504, detail="Hermes timed out")
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=500, detail="Hermes binary not found at /usr/local/bin/hermes"
+        )
 
-    if not response:
-        response = "Je n'ai pas de reponse."
+    if proc.returncode != 0:
+        logger.error("Hermes failed (rc=%d): %s", proc.returncode, stderr.decode())
+        raise HTTPException(status_code=502, detail="Hermes returned an error")
+
+    response_text = stdout.decode().strip()
+    if not response_text:
+        response_text = "Je n'ai pas de reponse."
 
     return VoiceResponse(
-        speech=response,
+        speech=response_text,
         conversation_id=req.conversation_id,
     )
 

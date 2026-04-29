@@ -1,11 +1,5 @@
 FROM python:3.11-slim
 
-RUN apt-get update && apt-get install -y --no-install-recommends git && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install Hermes Agent from source (just the Python package, no extras)
-RUN pip install --no-cache-dir git+https://github.com/NousResearch/hermes-agent.git
-
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

@@ -6,5 +6,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # Hermes config (API keys, model, memory, personality, etc.)
+      # Mount hermes binary and its venv from host
+      - /usr/local/lib/hermes-agent:/usr/local/lib/hermes-agent:ro
+      - /usr/local/bin/hermes:/usr/local/bin/hermes:ro
+      # Hermes config
       - ~/.hermes:/root/.hermes:ro
