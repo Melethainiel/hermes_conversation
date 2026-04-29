@@ -1,15 +1,15 @@
-FROM python:3.12-slim
+FROM python:3.11-slim
 
-# Install system deps for Hermes installer
+# System deps for Hermes install script
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl bash git && \
+    curl bash git xz-utils && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Hermes Agent via official script
 RUN curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
 
-# Ensure hermes is on PATH
-ENV PATH="/root/.local/bin:/root/.hermes/bin:${PATH}"
+# Add hermes and uv to PATH
+ENV PATH="/usr/local/bin:/usr/local/lib/hermes-agent/.venv/bin:/root/.local/bin:${PATH}"
 
 WORKDIR /app
 COPY requirements.txt .
