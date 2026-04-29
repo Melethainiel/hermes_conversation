@@ -8,8 +8,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Hermes Agent via official script
 RUN curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
 
-# Add hermes and uv to PATH
-ENV PATH="/usr/local/bin:/usr/local/lib/hermes-agent/.venv/bin:/root/.local/bin:${PATH}"
+# Use Hermes' own venv for everything
+ENV VIRTUAL_ENV="/usr/local/lib/hermes-agent/.venv"
+ENV PATH="${VIRTUAL_ENV}/bin:/root/.local/bin:/root/.hermes/node/bin:${PATH}"
 
 WORKDIR /app
 COPY requirements.txt .
