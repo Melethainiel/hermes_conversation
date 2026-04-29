@@ -3,8 +3,7 @@ services:
     build: ./wrapper
     container_name: hermes-wrapper
     restart: unless-stopped
-    ports:
-      - "8000:8000"
+    network_mode: host
     volumes:
       # Mount Hermes source + venv (includes all dependencies)
       - ~/.hermes/hermes-agent:/opt/hermes-agent:ro
